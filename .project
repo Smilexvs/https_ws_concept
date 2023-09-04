@@ -1339,21 +1339,6 @@
 			<location>/Users/alekseybogatov/esp/esp-idf/components/esp_common/src/esp_err_to_name.c</location>
 		</link>
 		<link>
-			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth.c</name>
-			<type>1</type>
-			<location>/Users/alekseybogatov/esp/esp-idf/components/esp_eth/src/esp_eth.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_netif_glue.c</name>
-			<type>1</type>
-			<location>/Users/alekseybogatov/esp/esp-idf/components/esp_eth/src/esp_eth_netif_glue.c</location>
-		</link>
-		<link>
-			<name>build/ide/esp_idf_components/esp_eth/src/esp_eth_phy_802_3.c</name>
-			<type>1</type>
-			<location>/Users/alekseybogatov/esp/esp-idf/components/esp_eth/src/esp_eth_phy_802_3.c</location>
-		</link>
-		<link>
 			<name>build/ide/esp_idf_components/esp_gdbstub/esp32c3/gdbstub_esp32c3.c</name>
 			<type>1</type>
 			<location>/Users/alekseybogatov/esp/esp-idf/components/esp_gdbstub/esp32c3/gdbstub_esp32c3.c</location>
