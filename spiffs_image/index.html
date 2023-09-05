@@ -5,68 +5,148 @@
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
-  width: 100%;
+  width: 50%;
 }
 
 td, th {
   border: 1px solid #dddddd;
-  text-align: left;
+  text-align: center;
   padding: 8px;
 }
 
 tr:nth-child(even) {
   background-color: #dddddd;
 }
+
+button {
+  border: 2px solid;
+  border-radius: 8px;
+  color: black;
+  padding: 15px 64px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 40px 0px;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
 
 <h2>Patients Data</h2>
-
 <table>
-  <tr>
-    <th>Name</th>
-    <th>Temperature</th>
-    <th>Blood pressure</th>
-    <th>Heart rate</th>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-  <tr>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Temperature</th>
+      <th>Blood pressure</th>
+      <th>Heart rate</th>
+    </tr>
+  </thead>
+  <tbody id="patient-table">
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
 </table>
+<div>
+  <button onclick="send('start')">Start</button>
+  <button onclick="send('stop')">Stop</button>
+  <button onclick="save()">Save File</button>
+</div>
+<script>
+  var connection = null;
+  var worker = new Worker('scripts/worker.js');
+  worker.onmessage = function (event) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(event.data));
+    element.setAttribute('download', "PatientData.txt");
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+   };
+
+  function send( arg ) {
+    var msg = {
+      command: arg
+    };
+    connection.send(JSON.stringify(msg));
+  }
+
+  function save()
+  {
+    var req = {};
+    req.type = "load"
+    worker.postMessage(req);
+  }
+
+  function connect() {
+    var serverUrl;    
+
+    serverUrl = "wss://" + document.location.hostname + ":443" + "/ws";
+
+    connection = new WebSocket(serverUrl);
+
+    connection.onopen = function(evt) {
+    };
+
+    connection.onmessage = function(evt) {
+      var table = document.getElementById("patient-table");
+      var response = JSON.parse(evt.data);
+
+      for(let row of table.rows)
+      {
+        row.cells[0].innerHTML = response.patient[row.rowIndex - 1].name;
+        row.cells[1].innerHTML = response.patient[row.rowIndex - 1].temperature;
+        row.cells[2].innerHTML = response.patient[row.rowIndex - 1].bloodPressure;
+        row.cells[3].innerHTML = response.patient[row.rowIndex - 1].heartRate;
+      }
+      response.timeStamp = Date.now();
+      response.type = "save";
+
+      worker.postMessage(response);
+    };
+  }
+  window.onload = connect();
+</script>
 
 </body>
 </html>
